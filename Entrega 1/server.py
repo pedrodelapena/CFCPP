@@ -29,11 +29,12 @@ def main():
     imageR = "./imgs/imageC.png"
 
     # Endereco da imagem a ser salva
-    imageW = "./imgs/recebida.png"
+    imageW = "./imgs/recebida2.jpeg"
 
     # Log
     print("-------------------------")
     print("Comunicação inicializada")
+    
     print("  porta : {}".format(com.fisica.name))
     print("-------------------------")
 
@@ -47,7 +48,17 @@ def main():
 
     # Faz a recepção dos dados
     print ("Recebendo dados .... ")
-    rxBuffer, nRx = com.getData(txLen)
+    
+
+    rxBuffer0, nRx = com.getData(1)
+
+    inicio = time.time()
+    rxBuffer1, nRx = com.getData(332956 - 1)
+    
+    rxBuffer = rxBuffer1 + rxBuffer0
+
+    fim = time.time()
+
 
     # log
     print ("Lido              {} bytes ".format(nRx))
@@ -58,13 +69,16 @@ def main():
     print (" - {}".format(imageW))
     f = open(imageW, 'wb')
     f.write(rxBuffer)
+    
 
     # Fecha arquivo de imagem
     f.close()
 
+
     # Encerra comunicação
     print("-------------------------")
     print("Comunicação encerrada")
+    print("tempo de trasmição:",fim - inicio)
     print("-------------------------")
     com.disable()
 
