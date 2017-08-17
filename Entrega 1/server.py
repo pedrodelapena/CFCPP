@@ -50,14 +50,14 @@ def main():
     print ("Recebendo dados .... ")
     
 
-    rxBuffer0, nRx = com.getData(1)
-
-    inicio = time.time()
-    rxBuffer1, nRx = com.getData(332956 - 1)
+    rxBuffer0, nRx = com.getData(1) # quando recebe 1 bit...
+    inicio = time.time() # começa a contar o tempo
+    rxBuffer1, nRx = com.getData(332956 - 1) # espera receber todos os bits -1 pois ele ja foi recebido anteriormente
+    fim = time.time() #acabou de receber
     
-    rxBuffer = rxBuffer1 + rxBuffer0
+    rxBuffer = rxBuffer1 + rxBuffer0 # soma o bit que esta faltando
 
-    fim = time.time()
+    
 
 
     # log
