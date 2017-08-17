@@ -14,7 +14,7 @@ import time
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 
-serialName = "COM5"           # Ubuntu (variacao de)
+serialName = "COM7"           # porta computador paulo
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 #serialName = "COM3"                  # Windows(variacao de)
 
@@ -26,7 +26,10 @@ def main():
     com.enable()
 
     # Endereco da imagem a ser transmitida
-    imageR = "./imgs/imagempesada.jpg"
+    imageR = "./imgs/imageC.png"
+
+    # Endereco da imagem a ser salva
+    imageW = "./imgs/recebida.png"
 
     # Log
     print("-------------------------")
@@ -42,24 +45,23 @@ def main():
     txLen    = len(txBuffer)
     print(txLen)
 
-    # Transmite imagem
-    print("Transmitindo .... {} bytes".format(txLen))
-    com.sendData(txBuffer)
-    inicio = time.time()
+    # Faz a recepção dos dados
+    print ("Recebendo dados .... ")
+    rxBuffer, nRx = com.getData(txLen)
 
-    # espera o fim da transmissão
-    while(com.tx.getIsBussy()):
-        pass
+    # log
+    print ("Lido              {} bytes ".format(nRx))
 
-    # Atualiza dados da transmissão
-    txSize = com.tx.getStatus()
-    print ("Transmitido       {} bytes ".format(txSize))
-    
-    #calculando tempo de transmissão
-    termino = time.time()
-    tempo = termino - inicio
-    print("Tempo de transmissão", tempo)
-    
+    # Salva imagem recebida em arquivo
+    print("-------------------------")
+    print ("Salvando dados no arquivo :")
+    print (" - {}".format(imageW))
+    f = open(imageW, 'wb')
+    f.write(rxBuffer)
+
+    # Fecha arquivo de imagem
+    f.close()
+
     # Encerra comunicação
     print("-------------------------")
     print("Comunicação encerrada")
