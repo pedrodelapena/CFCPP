@@ -20,9 +20,13 @@ from interfaceFisica import fisica
 from enlaceRx import RX
 from enlaceTx import TX
 
+
+
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
+    headSTART = "S.C.H.S" #super clever head start
+    headStruct = Struct("start" / Int8ub,"size" / Int16ub )
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -46,6 +50,10 @@ class enlace(object):
         self.tx.threadKill()
         time.sleep(1)
         self.fisica.close()
+
+    def buildHead(self, dataLen):
+        head = headStruct.build(dict(start = self.headSTART,size = dataLen))
+        return(head)
 
     ################################
     # Application  interface       #
