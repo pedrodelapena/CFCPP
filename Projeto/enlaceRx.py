@@ -98,8 +98,12 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
-        while(self.getBufferLen() < size):
+
+        while (self.getBufferLen() < size): #Substituir por true
+        	#if Eop = ?:#
+
             time.sleep(0.05)
+
 
         return(self.getBuffer(size))
 
