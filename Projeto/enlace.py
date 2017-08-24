@@ -36,7 +36,7 @@ class enlace(object):
 
     synCode = m.hexdigest()
 
-
+    headStruct.decode()
     Struct.decode()
 
     def __init__(self, name):
