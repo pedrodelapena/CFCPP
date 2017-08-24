@@ -122,7 +122,9 @@ class RX(object):
     def openPackege(self,file):
 
 
-    	file = file[9:-8]
+    	file = file[3:-8]
+
+
     	return(file)
 
 
