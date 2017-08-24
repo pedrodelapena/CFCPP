@@ -26,7 +26,7 @@ def main():
     com.enable()
 
     # Endereco da imagem a ser transmitida
-    imageR = "./imgs/imageC.png"
+    imageR = "./imgs/nyan.png"
 
     # Log
     print("-------------------------")
@@ -54,7 +54,7 @@ def main():
 
     # Atualiza dados da transmissão
     txSize = com.tx.getStatus()
-    print ("Transmitido       {} bytes ".format(txSize))
+    print ("Transmitido       {} bytes ".format(txLen))
     
     #calculando tempo de transmissão
     termino = time.time()
