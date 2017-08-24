@@ -88,12 +88,13 @@ class RX(object):
         """ Remove n data from buffer
         """
         self.threadPause()
+        print(nData)
         b           = self.buffer[0:nData]
         self.buffer = self.buffer[nData:]
         self.threadResume()
         return(b)
 
-    def getNData(self, size):
+    def getNData(self):
         """ Read N bytes of data from the reception buffer
 
         This function blocks until the number of bytes is received
@@ -116,7 +117,13 @@ class RX(object):
 
 
 
-        return(self.getBuffer(size))
+        return(self.getBuffer(len(self.buffer)))
+
+
+    def openPackege(self,file):
+    	
+    	file = file[3:-8]
+    	return(file)
 
 
     def clearBuffer(self):

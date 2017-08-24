@@ -29,7 +29,7 @@ def main():
     imageR = "./imgs/imageC.png"
 
     # Endereco da imagem a ser salva
-    imageW = "./imgs/recebida2.jpeg"
+    imageW = "./imgs/recebida.png"
 
     # Log
     print("-------------------------")
@@ -49,18 +49,13 @@ def main():
     # Faz a recepção dos dados
     print ("Recebendo dados .... ")
     
+    #inicio = time.time() # começa a contar o tempo
 
-    rxBuffer0, nRx = com.getData(1) # quando recebe 1 bit...
-    inicio = time.time() # começa a contar o tempo
-    print("começo recebimento de dados")
-    rxBuffer1, nRx = com.getData(3093 - 1+8+16+8) # espera receber todos os bits -1 pois ele ja foi recebido anteriormente
-    fim = time.time() #acabou de receber
+    rxBuffer, nRx = com.getData() # espera receber todos os bits -1 pois ele ja foi recebido anteriormente
+    #fim = time.time() #acabou de receber
     
-    rxBuffer = rxBuffer1 + rxBuffer0 # soma o bit que esta faltando
 
     print(rxBuffer)
-
-    rxBuffer = rxBuffer
 
     # log
     print ("Lido              {} bytes ".format(nRx))
@@ -80,7 +75,7 @@ def main():
     # Encerra comunicação
     print("-------------------------")
     print("Comunicação encerrada")
-    print("tempo de trasmição:",fim - inicio)
+    print("tempo de trasmição:","?")
     print("-------------------------")
     com.disable()
 

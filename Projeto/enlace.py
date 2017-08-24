@@ -61,14 +61,17 @@ class enlace(object):
     def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
-        data = self.addHead(txLen, txBuffer) + "s.t.o.p.".encode()
+        size = str(txlen)
+
+        data = "S.C.H.E.".encode() + size.encode() + txBuffer + "s.t.o.p.".encode()
         self.tx.sendBuffer(data)
 
-    def getData(self, size):
+    def getData(self):
         """ Get n data over the enlace interface
         Return the byte array and the size of the buffer
         """
-        data = self.rx.getNData(size)
+        data = self.rx.getNData()
+        data = self.rx.openPackege(data)
         return(data, len(data))
         
     def addHead(self, txLen, txBuffer):
