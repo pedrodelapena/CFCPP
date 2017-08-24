@@ -106,13 +106,12 @@ class RX(object):
         		if n[-8:] == end:
         			print("nossa deu certo")
         			break
-        			
-        			
-
-        	pass
-
 
         time.sleep(0.05)
+        pass
+
+
+        
 
 
 
