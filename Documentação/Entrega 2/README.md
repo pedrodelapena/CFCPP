@@ -17,10 +17,18 @@ O head possui 3 bytes reservados, sendo os 2 primeiros de inicialização e o ú
 O EOP é composto por apenas 1 byte, ou seja, 8 bits que garantem que o payload seja enviado por completo.
 
 ## Overhead
-
-![Overhead](doc/overhead.png)
  
 O overhead é calculado é calculado pela razão do tamanho total do pacote pelo tamanho da carga do arquivo (carga útil), ou seja:
+![Overhead](doc/overhead.png)
 
+## Tempo de transmissão
+
+O tempo é calculado por:
+![Tempo de Transmissão](doc/tempobs.png)
+
+## Throughput 
+
+É a velocidade de envio dos dados, calculado por:
+![Throughput](doc/throughput.png)
 
 
