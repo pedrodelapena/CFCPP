@@ -25,7 +25,7 @@ from enlaceTx import TX
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
-    headSTART = 0xff #super clever head start
+    headSTART = 0XFF #super clever head start
     headStruct = Struct("start" / Int8ub,"size" / Int16ub )
 
     def __init__(self, name):
@@ -73,4 +73,4 @@ class enlace(object):
         
     def addHead(self, txLen, txBuffer):
         return (self.buildHead(txLen) + txBuffer)
-        
+
