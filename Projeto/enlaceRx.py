@@ -98,11 +98,22 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
+        end = "s.t.o.p.".encode()
 
-        while (self.getBufferLen() < size):
-        	
+        while True:
+        	if self.getBufferLen() > 8:
+        		n = self.buffer
+        		if n[-8:] == end:
+        			print("nossa deu certo")
+        			break
+        			
+        			
 
-            time.sleep(0.05)
+        	pass
+
+
+        time.sleep(0.05)
+
 
 
         return(self.getBuffer(size))
