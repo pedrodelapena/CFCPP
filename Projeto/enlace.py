@@ -12,6 +12,7 @@ import time
 
 # Construct Struct
 from construct import *
+import hashlib
 
 # Interface Física
 from interfaceFisica import fisica
@@ -25,8 +26,18 @@ from enlaceTx import TX
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
-    headSTART = 0XFF #super clever head start
-    headStruct = Struct("start" / Int8ub,"size" / Int16ub )
+    headSTART = "S.C.H.S.".encode() #super clever head start
+    headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK" / Int8ub )
+    ackCode = "deu certo!".encode()
+    nackCode = "a casa caiu".encode()
+
+    m = hashlib.sha256()
+    m.update("Nobody inspects the spammish repetition".encode("UTF-8"))
+
+    synCode = m.hexdigest()
+
+
+    Struct.decode()
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -53,6 +64,17 @@ class enlace(object):
 
     def buildHead(self, dataLen):
         head = self.headStruct.build(dict(start = self.headSTART,size = dataLen))
+        return(head)
+
+    def buildSync(self, dataLen):
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode))
+        return(head)
+
+    def buildACK(self, dataLen,deuCerto):
+        if deuCerto == True:
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode, ACK = ackCode))
+        if deuCerto == False:
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode, ACK = nackCode))
         return(head)
 
     ################################

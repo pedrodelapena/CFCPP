@@ -5,9 +5,11 @@
 # Prof. Rafael Corsi
 #  Abril/2017
 #  Camada de Enlace
+# parte do server
 ####################################################
 # Importa pacote de tempo
 import time
+from construct import *
 
 # Threads
 import threading
@@ -122,7 +124,6 @@ class RX(object):
 
 
     	file = file[3:-8]
-
 
     	return(file)
 

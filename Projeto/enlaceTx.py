@@ -5,6 +5,7 @@
 # Prof. Rafael Corsi
 #  Abril/2017
 #  Camada de Enlace
+# parte do cliente
 ####################################################
 
 # Importa pacote de tempo
