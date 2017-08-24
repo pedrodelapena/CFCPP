@@ -14,7 +14,7 @@ import time
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 
-serialName = "COM5"           # Ubuntu (variacao de)
+serialName = "COM4"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 #serialName = "COM3"                  # Windows(variacao de)
 
@@ -26,7 +26,7 @@ def main():
     com.enable()
 
     # Endereco da imagem a ser transmitida
-    imageR = "./imgs/imagempesada.jpg"
+    imageR = "./imgs/imageC.png"
 
     # Log
     print("-------------------------")
@@ -44,7 +44,8 @@ def main():
 
     # Transmite imagem
     print("Transmitindo .... {} bytes".format(txLen))
-    com.sendData(txBuffer)
+    com.sendData(txLen, txBuffer)
+    #print(txBuffer)
     inicio = time.time()
 
     # espera o fim da transmissão

@@ -25,7 +25,7 @@ from enlaceTx import TX
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
-    headSTART = "S.C.H.S" #super clever head start
+    headSTART = 0xff #super clever head start
     headStruct = Struct("start" / Int8ub,"size" / Int16ub )
 
     def __init__(self, name):
@@ -52,15 +52,16 @@ class enlace(object):
         self.fisica.close()
 
     def buildHead(self, dataLen):
-        head = headStruct.build(dict(start = self.headSTART,size = dataLen))
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen))
         return(head)
 
     ################################
     # Application  interface       #
     ################################
-    def sendData(self, data):
+    def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
+        data = self.addHead(txLen, txBuffer) + "s.t.o.p.".encode()
         self.tx.sendBuffer(data)
 
     def getData(self, size):
@@ -69,3 +70,7 @@ class enlace(object):
         """
         data = self.rx.getNData(size)
         return(data, len(data))
+        
+    def addHead(self, txLen, txBuffer):
+        return (self.buildHead(txLen) + txBuffer)
+        
