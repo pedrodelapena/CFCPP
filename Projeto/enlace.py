@@ -61,10 +61,7 @@ class enlace(object):
     def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
-        size = txLen//255
-        modulo = txLen%255
-
-        data = "S.C.H.E.".encode() + size + modulo + txBuffer + "s.t.o.p.".encode()
+        data = self.addHead(txLen, txBuffer) + "s.t.o.p.".encode()
         self.tx.sendBuffer(data)
 
     def getData(self):

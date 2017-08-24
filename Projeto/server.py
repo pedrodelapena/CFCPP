@@ -55,8 +55,6 @@ def main():
     #fim = time.time() #acabou de receber
     
 
-    print(rxBuffer)
-
     # log
     print ("Lido              {} bytes ".format(nRx))
 

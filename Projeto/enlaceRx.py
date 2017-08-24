@@ -6,7 +6,6 @@
 #  Abril/2017
 #  Camada de Enlace
 ####################################################
-
 # Importa pacote de tempo
 import time
 
@@ -121,8 +120,9 @@ class RX(object):
 
 
     def openPackege(self,file):
-    	
-    	file = file[3:-8]
+
+
+    	file = file[9:-8]
     	return(file)
 
 
