@@ -10,11 +10,15 @@ O encapsulamento delimita o arquivo com a utilização de um HEAD e um end of pa
 
 ## HEAD e EOP
 
+![HEAD e EOP](doc/headeop.png)
+
 O head possui 3 bytes reservados, sendo os 2 primeiros de inicialização e o último com o tamanho do arquivo que será empacotado.
 
 O EOP é composto por apenas 1 byte, ou seja, 8 bits que garantem que o payload seja enviado por completo.
 
 ## Overhead
+
+![Overhead](doc/overhead.png)
  
 O overhead é calculado é calculado pela razão do tamanho total do pacote pelo tamanho da carga do arquivo (carga útil), ou seja:
 
