@@ -100,7 +100,7 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
-        end = "s.t.o.p.".encode()
+        end = Enlace.end
 
         while True:
         	if self.getBufferLen() > 8:

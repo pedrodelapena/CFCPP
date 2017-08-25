@@ -36,8 +36,6 @@ class enlace(object):
 
     synCode = m.hexdigest()
 
-    headStruct.decode()
-    Struct.decode()
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -46,6 +44,7 @@ class enlace(object):
         self.rx          = RX(self.fisica)
         self.tx          = TX(self.fisica)
         self.connected   = False
+        self.end         = "s.t.o.p.".encode()
 
     def enable(self):
         """ Enable reception and transmission
@@ -83,7 +82,7 @@ class enlace(object):
     def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
-        data = self.addHead(txLen, txBuffer) + "s.t.o.p.".encode()
+        data = self.addHead(txLen, txBuffer) + self.end
         self.tx.sendBuffer(data)
 
     def getData(self):
