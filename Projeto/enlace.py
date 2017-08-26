@@ -96,3 +96,6 @@ class enlace(object):
     def addHead(self, txLen, txBuffer):
         return (self.buildHead(txLen) + txBuffer)
 
+    def decrypHead(self, head):
+        return (struct.unpack(self.headStruct, head))
+

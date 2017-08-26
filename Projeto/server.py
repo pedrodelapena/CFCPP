@@ -10,6 +10,7 @@
 from enlace import *
 import time
 
+import sys
 # Serial Com Port
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
