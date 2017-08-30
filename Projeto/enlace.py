@@ -27,7 +27,7 @@ class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
     headSTART = "S.C.H.S.".encode() #super clever head start
-    headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK" / Int8ub )
+    headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK_NACK" / Int8ub )
     ackCode = "deu certo!".encode()
     nackCode = "a casa caiu".encode()
 
@@ -62,20 +62,31 @@ class enlace(object):
         self.fisica.close()
 
     def buildHead(self, dataLen):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen))
+        head = headStruct.build(dict(start = headSTART,size = dataLen))
         return(head)
 
     def buildSync(self, dataLen):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode))
+        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode))
         return(head)
 
-    def buildACK(self, dataLen,deuCerto):
+    def buildACK_NACK(self, dataLen,deuCerto):
         if deuCerto == True:
-            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode, ACK = ackCode))
+            head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = ackCode))
         if deuCerto == False:
-            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = synCode, ACK = nackCode))
+            head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = nackCode))
         return(head)
 
+    def getSize(self,head):
+        container = headStruct.parse(head)
+        return container[size]
+
+    def getSYN(self,head):
+        container = headStruct.parse(head)
+        return container["SYN"]
+
+    def getACK_NACK(self,head):
+        container = headStruct.parse(head)
+        return container["ACK_NACK"]
     ################################
     # Application  interface       #
     ################################
