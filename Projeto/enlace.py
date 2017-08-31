@@ -10,6 +10,8 @@
 # Importa pacote de tempo
 import time
 
+import sys # da time out de um jeito estiloso
+
 # Construct Struct
 from construct import *
 import hashlib
@@ -96,16 +98,26 @@ class enlace(object):
         """
         sync = (self.buildSync() + self.end)
         head = self.buildHead(txLen)
+
+        time_inicio = time.time()
+
         while True:
             self.tx.sendBuffer(sync)
             if self.rx.getBufferLen() > 4:
-                if self.getACK_NACK(self.rx.getNData()) == 157: 
+                ack_syn = self.rx.getNData()
+                if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
                     print("ACK_NACK")
                     self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
                     time.sleep(1)
                     break
                 time.sleep(0.05)
             time.sleep(1)
+
+            time_now = time.time()
+            if (time_now - time_inicio) > 30.0:
+                sys.exit()
+
+
         time.sleep(1)
 
 
@@ -129,27 +141,21 @@ class enlace(object):
                 data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
-                    break # send syn + ack
+                    self.rx.clearBuffer()
+                    time.sleep(0.05)
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
+                    time.sleep(0.1)
 
-            time.sleep(0.05)
-
-        time.sleep(0.05)
-
-        
-
-
-
-        #receive ack
-
-
-
+                    data = self.rx.getNData() #receive ack
+                    if self.getACK_NACK(data) == 157:
+                        print("handshake completo")
+                        break
 
 
         data = self.rx.getNData()
         data, head = self.openPackage(data)
         return(data, len(data))
-        
+
     def addHead(self, txLen, txBuffer):
         return (self.buildHead(txLen) + txBuffer)
 
