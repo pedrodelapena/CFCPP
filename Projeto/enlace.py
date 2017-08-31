@@ -76,29 +76,28 @@ class enlace(object):
 
     def getSize(self,file):
         head = file[0:5]
-        container = headStruct.parse(head)
+        container = self.headStruct.parse(head)
         return container["size"]
 
     def getSYN(self,file):
         head = file[0:5]
-        container = headStruct.parse(head)
+        container = self.headStruct.parse(head)
         return container["SYN"]
 
     def getACK_NACK(self,file):
         head = file[0:5]
-        container = headStruct.parse(head)
+        container = self.headStruct.parse(head)
         return container["ACK_NACK"]
     ################################
     # Application  interface       #
     ################################
-    def sendData(self, txLen, txBuffer):
+    def sendData(self, txLen, data):
         """ Send data over the enlace interface
         """
         
 
-        
-
-        self.tx.sendBuffer(buildSync() + self.end) # send syn
+        head = self.buildHead(txLen)
+        self.tx.sendBuffer(head + self.buildSync() + self.end) # send syn
 
 
         # receive syn + ack
@@ -118,13 +117,15 @@ class enlace(object):
 
         while True:
             data = self.rx.getNData() # receive syn
-            if len(data) > 4:
-                if getSYN(data) == 1:
+            print(self.rx.getBufferLen())
+            if self.rx.getBufferLen() > 4:
+                if self.getSYN(data) == 1:
+                    print("Syn recebido")
                     break # send syn + ack
 
-            time.wait(0.05)
+            time.sleep(0.05)
 
-        time.wait(0.05)
+        time.sleep(0.05)
 
         
 

@@ -39,7 +39,7 @@ class RX(object):
                 rxTemp, nRx = self.fisica.read(self.READLEN)
                 if (nRx > 0):
                     self.buffer += rxTemp
-                    print(self.buffer)
+                    #print(self.buffer)
                     time.sleep(0.001)
 
     def threadStart(self):
@@ -91,7 +91,7 @@ class RX(object):
         """ Remove n data from buffer
         """
         self.threadPause()
-        print(nData)
+        #print(nData)
         b           = self.buffer[0:nData]
         self.buffer = self.buffer[nData:]
         self.threadResume()
