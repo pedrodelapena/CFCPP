@@ -15,7 +15,7 @@ import sys
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 
-serialName = "COM7"           # porta computador paulo
+serialName = "COM4"           # porta computador paulo
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 #serialName = "COM3"                  # Windows(variacao de)
 

@@ -111,6 +111,7 @@ class enlace(object):
         # receive ack
 
         data = (head + data + self.end)
+        print(data)
         self.tx.sendBuffer(data)
 
     def getData(self):
