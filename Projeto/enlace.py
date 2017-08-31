@@ -143,15 +143,19 @@ class enlace(object):
                 data = self.rx.getAllBuffer() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
-                    self.rx.clearBuffer()
                     time.sleep(0.05)
                     self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
-                    time.sleep(0.1)
+                    break
 
-                    data = self.rx.getAllBuffer() #receive ack
-                    if self.getACK_NACK(data) == 157:
-                        print("handshake completo")
-                        break
+        time.sleep(0.1)
+
+        while True :
+            data = self.rx.getNData() #receive ack
+            if self.getACK_NACK(data) == 157:
+                print("handshake completo")
+                break
+
+
 
 
         data = self.rx.getAllBuffer()

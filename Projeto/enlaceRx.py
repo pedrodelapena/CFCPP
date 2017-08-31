@@ -78,7 +78,7 @@ class RX(object):
         """
         return(len(self.buffer))
 
-    def getAllBuffer(self, len):
+    def getAllBuffer(self):
         """ Read ALL reception buffer and clears it
         """
         self.threadPause()
@@ -108,7 +108,7 @@ class RX(object):
         	if self.getBufferLen() >= 8:
         		n = self.buffer
         		if n[-8:] == self.end:
-        			print("nossa deu certo")
+        			print("nossa deu certo:", n)
         			break
 
         		time.sleep(0.05)
