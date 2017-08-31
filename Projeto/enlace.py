@@ -159,6 +159,7 @@ class enlace(object):
 
         while True:
             if self.rx.getBufferLen() > 4:
+            	time_start_getData = time.time()
                 data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
@@ -200,7 +201,7 @@ class enlace(object):
             else:
                 break
 
-
+        print("tempo de trasmição: ",time_start_getData - time.time())
         return(data, len(data))
 
     def addHead(self, txLen, txBuffer):
