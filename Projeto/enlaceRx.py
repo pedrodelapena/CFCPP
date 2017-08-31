@@ -19,6 +19,8 @@ class RX(object):
     """ This class implements methods to handle the reception
         data over the p2p fox protocol
     """
+
+    end = "s.t.o.p.".encode()
     
     def __init__(self, fisica):
         """ Initializes the TX class
@@ -100,18 +102,18 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
-        end = Enlace.end
+        
 
         while True:
-        	if self.getBufferLen() > 8:
+        	if self.getBufferLen() >= 8:
         		n = self.buffer
-        		if n[-8:] == end:
+        		if n[-8:] == self.end:
         			print("nossa deu certo")
         			break
 
-                time.sleep(0.05)
+        		time.sleep(0.05)
 
-            time.sleep(0.05)
+        	time.sleep(0.05)
 
 
         

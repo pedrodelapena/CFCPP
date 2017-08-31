@@ -26,11 +26,11 @@ from enlaceTx import TX
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
-    headSTART = 0xFF #super clever head start
+    headSTART = 0xFF # 255 #super clever head start
     headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK_NACK" / Int8ub )
-    ackCode = 0x9d
-    nackCode = 0x0e
-    synCode = 0x01
+    ackCode = 0x9d # 157
+    nackCode = 0x0e # 14
+    synCode = 0x01 # 1
 
     fakeAck = 0x00
     fakeSyn = 0x00
@@ -63,7 +63,7 @@ class enlace(object):
         head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = fakeSyn, ACK_NACK = fakeAck))
         return(head)
 
-    def buildSync(self, dataLen):
+    def buildSync(self, dataLen = 0):
         head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = fakeAck))
         return(head)
 
@@ -74,15 +74,18 @@ class enlace(object):
             head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = nackCode))
         return(head)
 
-    def getSize(self,head):
+    def getSize(self,file):
+        head = file[0:5]
         container = headStruct.parse(head)
         return container["size"]
 
-    def getSYN(self,head):
+    def getSYN(self,file):
+        head = file[0:5]
         container = headStruct.parse(head)
         return container["SYN"]
 
-    def getACK_NACK(self,head):
+    def getACK_NACK(self,file):
+        head = file[0:5]
         container = headStruct.parse(head)
         return container["ACK_NACK"]
     ################################
@@ -91,6 +94,18 @@ class enlace(object):
     def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
+        
+
+        
+
+        self.tx.sendBuffer(buildSync() + self.end) # send syn
+
+
+        # receive syn + ack
+
+        # receive ack
+
+
         data += self.end
         self.tx.sendBuffer(data)
 
@@ -98,6 +113,29 @@ class enlace(object):
         """ Get n data over the enlace interface
         Return the byte array and the size of the buffer
         """
+
+        
+
+        while True:
+            data = self.rx.getNData() # receive syn
+            if len(data) > 4:
+                if getSYN(data) == 1:
+                    break # send syn + ack
+
+            time.wait(0.05)
+
+        time.wait(0.05)
+
+        
+
+
+
+        #receive ack
+
+
+
+
+
         data = self.rx.getNData()
         data, head = self.openPackege(data)
         return(data, len(data))
