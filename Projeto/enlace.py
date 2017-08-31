@@ -94,11 +94,15 @@ class enlace(object):
     def sendData(self, txLen, data):
         """ Send data over the enlace interface
         """
-        
-
-        head = self.buildHead(txLen)
-        self.tx.sendBuffer(self.buildSync() + self.end)
-        time.sleep(1) # send syn
+        while True:
+            head = self.buildHead(txLen)
+            self.tx.sendBuffer(self.buildSync() + self.end)
+            if self.rx.getBufferLen() > 4:
+                if self.getACK_NACK(self.rx.getNData()) == 157: 
+                    print("ACK_NACK")
+                    break
+                time.sleep(0.05)
+        time.sleep(1)
 
 
         # receive syn + ack
