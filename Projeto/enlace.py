@@ -108,8 +108,7 @@ class enlace(object):
             print("Mandei o Sync \:3")
 
             time_now = time.time()
-            if (time_now - time_inicio) < 30.0:
-
+            if (time_now - time_inicio) < 30.0 and self.rx.getBufferLen() >= 8 :
                 ack_syn = self.rx.getNData()
                 if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
                     print("Mandei o ACK \:3")
@@ -118,7 +117,7 @@ class enlace(object):
                     break
 
             elif (time_now - time_inicio) > 30.0:
-                sys.exit()
+                sys.exit("time out")
 
         time.sleep(1)
 
