@@ -108,7 +108,7 @@ class RX(object):
         		if n[-8:] == end:
         			print("nossa deu certo")
         			break
-                    
+
                 time.sleep(0.05)
 
             time.sleep(0.05)
@@ -121,12 +121,6 @@ class RX(object):
         return(self.getBuffer(len(self.buffer)))
 
 
-    def openPackege(self,file):
-
-    	head = file[0:5]
-    	file = file[5:-8]
-
-    	return(file,head)
 
     def clearBuffer(self):
         """ Clear the reception buffer

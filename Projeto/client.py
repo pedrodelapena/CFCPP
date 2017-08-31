@@ -45,7 +45,7 @@ def main():
 
     # Transmite imagem
     print("Transmitindo .... {} bytes".format(txLen))
-    com.sendData(txLen, txBuffer)
+    com.sendData(txLen, addHead(txLen, txBuffer))
     #print(txBuffer)
     inicio = time.time()
 

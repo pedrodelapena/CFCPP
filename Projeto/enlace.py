@@ -26,16 +26,14 @@ from enlaceTx import TX
 class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
-    headSTART = "S.C.H.S.".encode() #super clever head start
+    headSTART = 0xFF #super clever head start
     headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK_NACK" / Int8ub )
-    ackCode = "deu certo!".encode()
-    nackCode = "a casa caiu".encode()
+    ackCode = 0x9d
+    nackCode = 0x0e
+    synCode = 0x01
 
-    m = hashlib.sha256()
-    m.update("Nobody inspects the spammish repetition".encode("UTF-8"))
-
-    synCode = m.hexdigest()
-
+    fakeAck = 0x00
+    fakeSyn = 0x00
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -62,11 +60,11 @@ class enlace(object):
         self.fisica.close()
 
     def buildHead(self, dataLen):
-        head = headStruct.build(dict(start = headSTART,size = dataLen))
+        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = fakeSyn, ACK_NACK = fakeAck))
         return(head)
 
     def buildSync(self, dataLen):
-        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode))
+        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = fakeAck))
         return(head)
 
     def buildACK_NACK(self, dataLen,deuCerto):
@@ -78,7 +76,7 @@ class enlace(object):
 
     def getSize(self,head):
         container = headStruct.parse(head)
-        return container[size]
+        return container["size"]
 
     def getSYN(self,head):
         container = headStruct.parse(head)
@@ -93,7 +91,7 @@ class enlace(object):
     def sendData(self, txLen, txBuffer):
         """ Send data over the enlace interface
         """
-        data = self.addHead(txLen, txBuffer) + self.end
+        data += self.end
         self.tx.sendBuffer(data)
 
     def getData(self):
@@ -101,7 +99,7 @@ class enlace(object):
         Return the byte array and the size of the buffer
         """
         data = self.rx.getNData()
-        data = self.rx.openPackege(data)
+        data = self.openPackege(data)
         return(data, len(data))
         
     def addHead(self, txLen, txBuffer):
@@ -109,4 +107,11 @@ class enlace(object):
 
     def decrypHead(self, head):
         return (struct.unpack(self.headStruct, head))
+
+    def openPackage(self,file):
+
+    	head = file[0:5]
+    	file = file[5:-8]
+
+    	return(file,head)
 
