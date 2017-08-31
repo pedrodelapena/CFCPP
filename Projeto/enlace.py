@@ -67,7 +67,7 @@ class enlace(object):
         head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.fakeAck))
         return(head)
 
-    def buildACK_NACK(self, dataLen = 0,deuCerto):
+    def buildACK_NACK(self, dataLen = 0,deuCerto = False):
         if deuCerto == True:
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode))
         if deuCerto == False:
@@ -94,8 +94,9 @@ class enlace(object):
     def sendData(self, txLen, data):
         """ Send data over the enlace interface
         """
+
+        head = self.buildHead(txLen)
         while True:
-            head = self.buildHead(txLen)
             self.tx.sendBuffer(self.buildSync() + self.end)
             if self.rx.getBufferLen() > 4:
                 if self.getACK_NACK(self.rx.getNData()) == 157: 
