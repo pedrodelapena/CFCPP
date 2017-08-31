@@ -60,18 +60,18 @@ class enlace(object):
         self.fisica.close()
 
     def buildHead(self, dataLen):
-        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = fakeSyn, ACK_NACK = fakeAck))
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.fakeSyn, ACK_NACK = self.fakeAck))
         return(head)
 
     def buildSync(self, dataLen = 0):
-        head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = fakeAck))
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.fakeAck))
         return(head)
 
     def buildACK_NACK(self, dataLen,deuCerto):
         if deuCerto == True:
-            head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = ackCode))
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode))
         if deuCerto == False:
-            head = headStruct.build(dict(start = headSTART,size = dataLen, SYN = synCode, ACK_NACK = nackCode))
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode))
         return(head)
 
     def getSize(self,file):
