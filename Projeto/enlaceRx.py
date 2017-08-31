@@ -111,7 +111,7 @@ class RX(object):
         		n = self.buffer
         		if n[-8:] == self.end:
         			#print("nossa deu certo:", n)
-                    ndc= True
+        			ndc = True
         			break
 
         		time.sleep(0.05)
