@@ -125,7 +125,7 @@ class enlace(object):
                 data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
-                    self.tx.sendBuffer(self.buildACK_NACK() + self.end)
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
                     break # send syn + ack
 
             time.sleep(0.05)
