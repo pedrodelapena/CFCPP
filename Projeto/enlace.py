@@ -77,34 +77,19 @@ class enlace(object):
         return(head)
 
     def getSize(self,file):
-        try:
-            head = file[0:5]
-            container = self.headStruct.parse(head)
-            return container["size"]
-
-        except Exception as e:
-            return None
+        head = file[0:5]
+        container = self.headStruct.parse(head)
+        return container["size"]
 
     def getSYN(self,file):
-
-        try:
-            head = file[0:5]
-            container = self.headStruct.parse(head)
-            return container["SYN"]
-
-        except Exception as e:
-            return None
-
+        head = file[0:5]
+        container = self.headStruct.parse(head)
+        return container["SYN"]
 
     def getACK_NACK(self,file):
-        try:
-            head = file[0:5]
-            container = self.headStruct.parse(head)
-            return container["ACK_NACK"]
-
-        except Exception as e:
-            return None
-
+        head = file[0:5]
+        container = self.headStruct.parse(head)
+        return container["ACK_NACK"]
     ################################
     # Application  interface       #
     ################################
@@ -123,9 +108,9 @@ class enlace(object):
             print("Mandei o Sync \:3")
 
             time_now = time.time()
-            if (time_now - time_inicio) < 30.0:
+            if (time_now - time_inicio) < 30.0 and self.rx.getBufferLen() >= 8:
 
-                ack_syn = self.rx.getNData()
+                ack_syn = self.rx.getAllBuffer()
                 if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
                     print("Mandei o ACK \:3")
                     time.sleep(1)
@@ -154,8 +139,8 @@ class enlace(object):
         
 
         while True:
-            if self.rx.getBufferLen() > 4:
-                data = self.rx.getNData() # receive syn
+            if self.rx.getBufferLen() >= 8:
+                data = self.rx.getAllBuffer() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
                     self.rx.clearBuffer()
@@ -163,13 +148,13 @@ class enlace(object):
                     self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
                     time.sleep(0.1)
 
-                    data = self.rx.getNData() #receive ack
+                    data = self.rx.getAllBuffer() #receive ack
                     if self.getACK_NACK(data) == 157:
                         print("handshake completo")
                         break
 
 
-        data = self.rx.getNData()
+        data = self.rx.getAllBuffer()
         data, head = self.openPackage(data)
         return(data, len(data))
 
