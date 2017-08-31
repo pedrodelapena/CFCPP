@@ -99,7 +99,7 @@ class enlace(object):
         Return the byte array and the size of the buffer
         """
         data = self.rx.getNData()
-        data = self.openPackege(data)
+        data, head = self.openPackege(data)
         return(data, len(data))
         
     def addHead(self, txLen, txBuffer):
