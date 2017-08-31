@@ -67,7 +67,7 @@ class enlace(object):
         head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.fakeAck))
         return(head)
 
-    def buildACK_NACK(self, dataLen,deuCerto):
+    def buildACK_NACK(self, dataLen = 0,deuCerto):
         if deuCerto == True:
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode))
         if deuCerto == False:
@@ -116,11 +116,11 @@ class enlace(object):
         
 
         while True:
-            data = self.rx.getNData() # receive syn
-            print(self.rx.getBufferLen())
             if self.rx.getBufferLen() > 4:
+                data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
-                    print("Syn recebido")
+                    print("Syn recebido, send ack + syn")
+                    self.tx.sendBuffer(self.buildACK_NACK() + self.end)
                     break # send syn + ack
 
             time.sleep(0.05)
@@ -138,7 +138,7 @@ class enlace(object):
 
 
         data = self.rx.getNData()
-        data, head = self.openPackege(data)
+        data, head = self.openPackage(data)
         return(data, len(data))
         
     def addHead(self, txLen, txBuffer):
