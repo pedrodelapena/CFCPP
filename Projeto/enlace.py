@@ -101,6 +101,8 @@ class enlace(object):
             if self.rx.getBufferLen() > 4:
                 if self.getACK_NACK(self.rx.getNData()) == 157: 
                     print("ACK_NACK")
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
+                    time.sleep(1)
                     break
                 time.sleep(0.05)
             time.sleep(1)
