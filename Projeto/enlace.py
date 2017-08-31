@@ -102,16 +102,16 @@ class enlace(object):
         time_inicio = time.time()
 
         while True:
-            self.tx.sendBuffer(sync)
-            if self.rx.getBufferLen() > 4:
-                ack_syn = self.rx.getNData()
-                if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
-                    print("ACK")
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
-                    time.sleep(1)
-                    break
-                time.sleep(0.05)
+            
             time.sleep(1)
+            self.tx.sendBuffer(sync)
+            print("Mandei o Sync \:3")
+            ack_syn = self.rx.getNData()
+            if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
+                print("Mandei o ACK \:3")
+                time.sleep(1)
+                self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
+                break
 
             time_now = time.time()
             if (time_now - time_inicio) > 30.0:
