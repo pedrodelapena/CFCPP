@@ -97,15 +97,15 @@ class enlace(object):
         
 
         head = self.buildHead(txLen)
-        self.tx.sendBuffer(head + self.buildSync() + self.end) # send syn
+        self.tx.sendBuffer(self.buildSync() + self.end)
+        time.sleep(1) # send syn
 
 
         # receive syn + ack
 
         # receive ack
 
-
-        data += self.end
+        data = (head + data + self.end)
         self.tx.sendBuffer(data)
 
     def getData(self):
