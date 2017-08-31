@@ -40,7 +40,7 @@ A máquina de estados basicamante avalia o <strong>estado atual</strong> tanto d
 
 ## Time out
 
-O tempo de timeout escolhido foi de 2s. O envio e recepção não são istantâneos e algumas partes do código demoram para rodar (prints) e quisemos ter uma margem de segurança. Contudo, temos ciência que 2 segundos é um tempo de timeout alto.
+O tempo de timeout escolhido foi de 6s. O envio e recepção não são istantâneos e algumas partes do código demoram para rodar (prints) e quisemos ter uma margem de segurança. Contudo, temos ciência que 6 segundos é um tempo de timeout alto.
 
 ## Reconhecimento do pacote recebido
 
