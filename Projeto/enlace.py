@@ -76,6 +76,11 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode))
         return(head)
 
+    def getheadStart(self,file):
+        head = file[0:5]
+        container = self.headStruct.parse(head)
+        return container["start"]
+
     def getSize(self,file):
         head = file[0:5]
         container = self.headStruct.parse(head)
@@ -105,6 +110,7 @@ class enlace(object):
             
             time.sleep(1)
             self.tx.sendBuffer(sync)
+            self.rx.clearBuffer()
             print("Mandei o Sync \:3")
 
             time_now = time.time()
@@ -131,6 +137,19 @@ class enlace(object):
         print(data)
         self.tx.sendBuffer(data)
 
+        time_for_check = time.time()
+
+        while time_for_check < 1.0:
+            ack_syn = self.rx.getNData()
+            if self.getACK_NACK(ack_syn) == 14:
+                print("pacote corrompido!")
+                self.tx.sendBuffer(data)
+                time_for_check = time.time()
+
+
+
+
+
     def getData(self):
         """ Get n data over the enlace interface
         Return the byte array and the size of the buffer
@@ -143,19 +162,45 @@ class enlace(object):
                 data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
-                    self.rx.clearBuffer()
-                    time.sleep(0.05)
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
+                    
                     time.sleep(0.1)
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
+                    self.rx.clearBuffer()
 
                     data = self.rx.getNData() #receive ack
                     if self.getACK_NACK(data) == 157:
                         print("handshake completo")
                         break
 
+        self.rx.clearBuffer()
+        while True:
+            data = self.rx.getNData()
+            self.rx.clearBuffer()
+            if self.getheadStart(data)==255:
+                break
 
-        data = self.rx.getNData()
+        print("Meu debug: "+str(data))
         data, head = self.openPackage(data)
+
+        while True: # checa se os sizes batem
+            if self.getSize(head) != len(data) :
+                print("dataLen:",dataLen,"head size",self.getSize(head))
+                self.tx.sendBuffer(self.buildACK_NACK(deuCerto = False) + self.end)
+                time.sleep(0.2)
+
+                while True: #pega a data novamente
+                    data = self.rx.getNData()
+                    self.rx.clearBuffer()
+                    if self.getheadStart(data)==255:
+                        break
+
+                print("Meu debug: "+str(data))
+                data, head = self.openPackage(data)
+
+            else:
+                break
+
+
         return(data, len(data))
 
     def addHead(self, txLen, txBuffer):
