@@ -102,13 +102,16 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
-        
+        inicio= time.time()
+        timeout= 2.0
+        ndc=False
 
-        while True:
+        while (time.time()-inicio)<timeout:
         	if self.getBufferLen() >= 8:
         		n = self.buffer
         		if n[-8:] == self.end:
-        			print("nossa deu certo:", n)
+        			#print("nossa deu certo:", n)
+                    ndc
         			break
 
         		time.sleep(0.05)
@@ -116,11 +119,9 @@ class RX(object):
         	time.sleep(0.05)
 
 
-        
-
-
-
-        return(self.getBuffer(len(self.buffer)))
+        if ndc:
+            return(self.getBuffer(len(self.buffer)))
+        return b'0x00000000'
 
 
 
