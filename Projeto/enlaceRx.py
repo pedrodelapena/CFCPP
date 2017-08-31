@@ -102,16 +102,22 @@ class RX(object):
 
         This function blocks until the number of bytes is received
         """
+        time_inicio = time.time()
         
 
         while True:
         	if self.getBufferLen() >= 8:
         		n = self.buffer
         		if n[-8:] == self.end:
-        			print("nossa deu certo")
+        			print("nossa deu certo:", n)
         			break
 
         		time.sleep(0.05)
+
+        	time_now = time.time()
+
+        	if (time_now - time_inicio) > 30.0:
+        		return b"0"
 
         	time.sleep(0.05)
 

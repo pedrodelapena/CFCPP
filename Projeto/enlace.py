@@ -77,19 +77,34 @@ class enlace(object):
         return(head)
 
     def getSize(self,file):
-        head = file[0:5]
-        container = self.headStruct.parse(head)
-        return container["size"]
+        try:
+            head = file[0:5]
+            container = self.headStruct.parse(head)
+            return container["size"]
+
+        except Exception as e:
+            return None
 
     def getSYN(self,file):
-        head = file[0:5]
-        container = self.headStruct.parse(head)
-        return container["SYN"]
+
+        try:
+            head = file[0:5]
+            container = self.headStruct.parse(head)
+            return container["SYN"]
+
+        except Exception as e:
+            return None
+
 
     def getACK_NACK(self,file):
-        head = file[0:5]
-        container = self.headStruct.parse(head)
-        return container["ACK_NACK"]
+        try:
+            head = file[0:5]
+            container = self.headStruct.parse(head)
+            return container["ACK_NACK"]
+
+        except Exception as e:
+            return None
+
     ################################
     # Application  interface       #
     ################################
@@ -108,7 +123,8 @@ class enlace(object):
             print("Mandei o Sync \:3")
 
             time_now = time.time()
-            if (time_now - time_inicio) < 30.0 and self.rx.getBufferLen() >= 8 :
+            if (time_now - time_inicio) < 30.0:
+
                 ack_syn = self.rx.getNData()
                 if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
                     print("Mandei o ACK \:3")
@@ -117,7 +133,7 @@ class enlace(object):
                     break
 
             elif (time_now - time_inicio) > 30.0:
-                sys.exit("time out")
+                sys.exit()
 
         time.sleep(1)
 
