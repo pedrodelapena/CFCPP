@@ -23,6 +23,8 @@ from interfaceFisica import fisica
 from enlaceRx import RX
 from enlaceTx import TX
 
+import math # necessario para divisão de pacotes
+
 
 
 class enlace(object):
@@ -36,6 +38,8 @@ class enlace(object):
 
     fakeAck = 0x00
     fakeSyn = 0x00
+
+    maximum_Package = 2048 *8 # determina o tamanho maximo que um pacote pode ter (*8 pois precisa ser em bits)
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -76,7 +80,7 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0))
         return(head)
 
-    def build_complete_head(self, dataLen,deuCerto,P_size,P_total):
+    def build_complete(self, dataLen,deuCerto = True,P_size,P_total):
         head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0))
 
 
@@ -105,14 +109,73 @@ class enlace(object):
         container = self.headStruct.parse(head)
         return (container["P_size"],container["P_total"])
 
-    def Compare(self,file):
-        head = file[0:7]
-        container = self.headStruct.parse(head)
-        print("Compare debug: ",container["P_total"]," ",container["P_size"])
-        if container["P_total"] = container["P_size"] :
+    def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
+
+       
+        P_size,P_total = self.getP_size_total(file)
+
+        print("Compare debug: ",P_size," ",P_total)
+
+        if P_size = P_total :
         	return True
         else:
         	return False
+
+    def DataSender(self,data):
+    	"""
+		#Exemplo basico
+		
+		n = 3 # tamanho maximo do pacote
+
+		a = b"0123456789"
+
+		quantidade_partes = math.ceil(len(a)/n) # acha a quantidade minima de partes que o pacote de ser dividido
+
+		print(quantidade_partes)
+
+		beginning = 0
+		end = n
+
+		Parte_atual = 0
+
+		while Parte_atual < quantidade_partes: # roda a quantidade de vezes minima
+		    print(a[beginning:end])
+		    beginning += n
+		    end += n
+		    Parte_atual += 1
+
+		"""
+
+		n = self.maximum_Package # tamanho maximo do pacote, so mudei de nome
+
+		quantidade_partes = math.ceil(len(data)/n) # acha a quantidade minima de partes que o pacote de ser dividido
+
+		print("quantidade de partes necessarias : ",quantidade_partes)
+
+		beginning = 0
+		end = n
+		Parte_atual = 0
+
+		while Parte_atual < quantidade_partes # roda a quantidade de vezes minima
+		    #print(a[beginning:end])
+
+		    # colocar o codigo que manda o pacote aqui
+		    head = self.build_complete(len(data),True,Parte_atual + 1,quantidade_partes)
+		    data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
+		    #print(data)
+		    self.tx.sendBuffer(data)
+
+		    if True: # colocar um codigo que espera um ack que o pacote foi recebido sem corrupção aqui, se dar time out mandar denovo
+			    beginning += n
+			    end += n
+			    Parte_atual += 1
+
+		    
+
+
+
+
+
 
 
     def handshake_server(self):
@@ -166,22 +229,18 @@ class enlace(object):
         time.sleep(1)
 
 
-        # receive syn + ack
-
-        # receive ack
-
-        data = (head + data + self.end)
+        data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
         print(data)
-        self.tx.sendBuffer(data)
+        self.tx.sendBuffer(data) 
 
         time_for_check = time.time()
 
-        while time_for_check < 1.0:
+        while time_for_check < 1.0: #criar um novo jeito para mexer com os pacotes corrompidos
             ack_syn = self.rx.getNData()
             if self.getACK_NACK(ack_syn) == 14:
                 print("pacote corrompido!")
                 self.tx.sendBuffer(data)
-                time_for_check = time.time()
+                time_for_check = time.time() #...até aqui
 
 
 
@@ -197,22 +256,34 @@ class enlace(object):
 
         self.rx.clearBuffer()
 
-        pacote = b""
+        Complete_package = b""
 
+        Current_P_size = 1
 
-        while True:
+        while True: #pega um pacote
             data = self.rx.getNData()
-            #self.rx.clearBuffer()
-            if self.getheadStart(data)==255: # se achor o head do pacote
+            self.rx.clearBuffer()
+            if self.getheadStart(data)==255: # se achar o head do pacote
             	payload = self.openPackage(data)
 
-            	pacote += payload
+            	P_size = getP_size_total(data)
 
-            	if Compare(data):
-                	break
+            	print("P_size,Current_P_size : ",P_size," ",Current_P_size)
+
+            	if P_size = Current_P_size:
+            		Complete_package += payload
+
+            		self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)# send ack here
+            		Current_P_size += 1
+
+
+            	if Compare_number_package(data):
+            		break
 
         print("Meu debug: "+str(data))
         data, head = self.openPackage(data)
+
+        """
 
         while True: # checa se os sizes batem
             if self.getSize(head) != len(data) :
@@ -231,9 +302,10 @@ class enlace(object):
 
             else:
                 break
+        """
 
         print("tempo de trasmição: ",time_start_getData - time.time())
-        return(data, len(data))
+        return(Complete_package, len(Complete_package))
 
     def addHead(self, txLen, txBuffer):
         return (self.buildHead(txLen) + txBuffer)
