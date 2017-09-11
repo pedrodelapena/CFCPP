@@ -155,10 +155,6 @@ class enlace(object):
 
 
 
-
-
-
-
     def handshake_server(self):
         while True:
             if self.rx.getBufferLen() > 4:
@@ -212,9 +208,6 @@ class enlace(object):
         self.DataSender(data)
 
 
-
-
-
     def getData(self):
         """ Get n data over the enlace interface
         Return the byte array and the size of the buffer
@@ -233,22 +226,25 @@ class enlace(object):
             data = self.rx.getNData()
             self.rx.clearBuffer()
             if self.getheadStart(data)==255: # se achar o head do pacote
-                payload = self.openPackage(data)
+                payload, trash = self.openPackage(data)
 
                 P_size,P_total = self.getP_size_total(data)
 
                 print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
-            if P_size == Current_P_size:
-                print("Payload : ",payload)
-                Complete_package += payload
 
-                self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
-                Current_P_size += 1
+                if P_size == Current_P_size:
+                    print("Payload : ",type(payload))
 
 
-            if P_size == P_total:
-                break
+                    Complete_package += payload
+
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
+                    Current_P_size += 1
+
+
+                if P_size == P_total:
+                    break
 
         print("Meu debug: "+str(Complete_package))
         data, head = self.openPackage(data)
@@ -275,6 +271,7 @@ class enlace(object):
         """
 
         #print("tempo de trasmição: ",time_start_getData - time.time())
+
         return(Complete_package, len(Complete_package))
 
     def addHead(self, txLen, txBuffer):
