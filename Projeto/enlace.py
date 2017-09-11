@@ -80,8 +80,9 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0))
         return(head)
 
-    def build_complete(self, dataLen,deuCerto,P_size,P_total):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0))
+    def build_complete(self, dataLen,deuCerto,len,total_len):
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = len,P_total = total_len))
+        return head
 
 
     def getheadStart(self,file):
@@ -211,7 +212,7 @@ class enlace(object):
 
         data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
         print(data)
-        self.tx.sendBuffer(data) 
+        self.tx.sendBuffer(data)
 
         time_for_check = time.time()
 
@@ -244,22 +245,25 @@ class enlace(object):
             data = self.rx.getNData()
             self.rx.clearBuffer()
             if self.getheadStart(data)==255: # se achar o head do pacote
-                payload = self.openPackage(data)
+                payload, trash = self.openPackage(data)
 
                 P_size,P_total = self.getP_size_total(data)
 
                 print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
-            if P_size == Current_P_size:
-                print("Payload : ",payload)
-                Complete_package += payload
 
-                self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
-                Current_P_size += 1
+                if P_size == Current_P_size:
+                    print("Payload : ",type(payload))
 
 
-            if P_size == P_total:
-                break
+                    Complete_package += payload
+
+                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
+                    Current_P_size += 1
+
+
+                if P_size == P_total:
+                    break
 
         print("Meu debug: "+str(Complete_package))
         data, head = self.openPackage(data)
@@ -286,6 +290,7 @@ class enlace(object):
         """
 
         #print("tempo de trasmição: ",time_start_getData - time.time())
+
         return(Complete_package, len(Complete_package))
 
     def addHead(self, txLen, txBuffer):
