@@ -80,9 +80,9 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0))
         return(head)
 
-    def build_complete(self, dataLen,deuCerto,P_size,P_total):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0))
-
+    def build_complete(self, dataLen,deuCerto,len,total_len):
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = len, P_total = total_len))
+        return(head)
 
     def getheadStart(self,file):
         head = file[0:7]
@@ -137,6 +137,7 @@ class enlace(object):
             #print(a[beginning:end])
 
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
+            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",(head))
             data = (head + data + self.end)
             print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
             self.tx.sendBuffer(data)
@@ -208,19 +209,7 @@ class enlace(object):
 
         time.sleep(1)
 
-
-        data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
-        print(data)
-        self.tx.sendBuffer(data) 
-
-        time_for_check = time.time()
-
-        while time_for_check < 1.0: #criar um novo jeito para mexer com os pacotes corrompidos
-            ack_syn = self.rx.getNData()
-            if self.getACK_NACK(ack_syn) == 14:
-                print("pacote corrompido!")
-                self.tx.sendBuffer(data)
-                time_for_check = time.time() #...até aqui
+        self.DataSender(data)
 
 
 
