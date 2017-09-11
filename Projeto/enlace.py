@@ -137,8 +137,8 @@ class enlace(object):
             #print(a[beginning:end])
 
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
-            data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
-            #print(data)
+            data = (head + data + self.end)
+            print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
             self.tx.sendBuffer(data)
 
             timeout = time.time()
@@ -244,23 +244,24 @@ class enlace(object):
             data = self.rx.getNData()
             self.rx.clearBuffer()
             if self.getheadStart(data)==255: # se achar o head do pacote
-            	payload = self.openPackage(data)
+                payload = self.openPackage(data)
 
-            	P_size = getP_size_total(data)
+                P_size,P_total = self.getP_size_total(data)
 
-            	print("P_size,Current_P_size : ",P_size," ",Current_P_size)
+                print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
-            	if P_size == Current_P_size:
-            		Complete_package += payload
+            if P_size == Current_P_size:
+                print("Payload : ",payload)
+                Complete_package += payload
 
-            		self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
-            		Current_P_size += 1
+                self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
+                Current_P_size += 1
 
 
-            	if Compare_number_package(data):
-            		break
+            if P_size == P_total:
+                break
 
-        print("Meu debug: "+str(data))
+        print("Meu debug: "+str(Complete_package))
         data, head = self.openPackage(data)
 
         """
@@ -284,7 +285,7 @@ class enlace(object):
                 break
         """
 
-        print("tempo de trasmição: ",time_start_getData - time.time())
+        #print("tempo de trasmição: ",time_start_getData - time.time())
         return(Complete_package, len(Complete_package))
 
     def addHead(self, txLen, txBuffer):
