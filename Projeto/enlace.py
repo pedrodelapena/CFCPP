@@ -154,13 +154,12 @@ class enlace(object):
 
 		beginning = 0
 		end = n
-		Parte_atual = 0
+		Parte_atual = 1
 
-		while Parte_atual < quantidade_partes # roda a quantidade de vezes minima
+		while Parte_atual <= quantidade_partes # roda a quantidade de vezes minima
 		    #print(a[beginning:end])
 
-		    # colocar o codigo que manda o pacote aqui
-		    head = self.build_complete(len(data),True,Parte_atual + 1,quantidade_partes)
+		    head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
 		    data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
 		    #print(data)
 		    self.tx.sendBuffer(data)
