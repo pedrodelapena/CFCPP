@@ -80,7 +80,7 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0))
         return(head)
 
-    def build_complete(self, dataLen,deuCerto = True,P_size,P_total):
+    def build_complete(self, dataLen,deuCerto,P_size,P_total):
         head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0))
 
 
@@ -116,57 +116,34 @@ class enlace(object):
 
         print("Compare debug: ",P_size," ",P_total)
 
-        if P_size = P_total :
-        	return True
+        if P_size == P_total :
+            return True
         else:
-        	return False
+            return False
 
     def DataSender(self,data):
-    	"""
-		#Exemplo basico
-		
-		n = 3 # tamanho maximo do pacote
 
-		a = b"0123456789"
+        n = self.maximum_Package # tamanho maximo do pacote, so mudei de nome
 
-		quantidade_partes = math.ceil(len(a)/n) # acha a quantidade minima de partes que o pacote de ser dividido
+        quantidade_partes = math.ceil(len(data)/n) # acha a quantidade minima de partes que o pacote de ser dividido
 
-		print(quantidade_partes)
+        print("quantidade de partes necessarias : ",quantidade_partes)
 
-		beginning = 0
-		end = n
+        beginning = 0
+        end = n
+        Parte_atual = 1
 
-		Parte_atual = 0
+        while Parte_atual <= quantidade_partes: # roda a quantidade de vezes minima
+            #print(a[beginning:end])
 
-		while Parte_atual < quantidade_partes: # roda a quantidade de vezes minima
-		    print(a[beginning:end])
-		    beginning += n
-		    end += n
-		    Parte_atual += 1
-
-		"""
-
-		n = self.maximum_Package # tamanho maximo do pacote, so mudei de nome
-
-		quantidade_partes = math.ceil(len(data)/n) # acha a quantidade minima de partes que o pacote de ser dividido
-
-		print("quantidade de partes necessarias : ",quantidade_partes)
-
-		beginning = 0
-		end = n
-		Parte_atual = 1
-
-		while Parte_atual <= quantidade_partes # roda a quantidade de vezes minima
-		    #print(a[beginning:end])
-
-		    head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
-		    data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
-		    #print(data)
-		    self.tx.sendBuffer(data)
+            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
+            data = (head + data + self.end) # susbistituir todo esse bagulho pelo DataSender des daqui...
+            #print(data)
+            self.tx.sendBuffer(data)
 
             timeout = time.time()
 
-		    while time.time() - timeout <= 3.0:
+            while time.time() - timeout <= 3.0:
                 ack_esperado = self.rx.getNData()
                 if self.getACK_NACK(ack_esperado) == 157:
                     beginning += n
@@ -184,7 +161,7 @@ class enlace(object):
     def handshake_server(self):
         while True:
             if self.rx.getBufferLen() > 4:
-            	time_start_getData = time.time()
+                time_start_getData = time.time()
                 data = self.rx.getNData() # receive syn
                 if self.getSYN(data) == 1:
                     print("Syn recebido, send ack + syn")
@@ -273,7 +250,7 @@ class enlace(object):
 
             	print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
-            	if P_size = Current_P_size:
+            	if P_size == Current_P_size:
             		Complete_package += payload
 
             		self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
