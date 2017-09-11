@@ -103,7 +103,7 @@ class RX(object):
         This function blocks until the number of bytes is received
         """
         inicio= time.time()
-        timeout= 2.0
+        timeout= 6.66
         ndc=False
 
         while (time.time()-inicio)<timeout:

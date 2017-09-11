@@ -74,7 +74,6 @@ def main():
     # Encerra comunicação
     print("-------------------------")
     print("Comunicação encerrada")
-    print("tempo de trasmição:","?")
     print("-------------------------")
     com.disable()
 
