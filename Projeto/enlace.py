@@ -167,7 +167,7 @@ class enlace(object):
 
             timeout = time.time()
 
-		    while timeout - time.time() < 3.0:
+		    while time.time() - timeout <= 3.0:
                 ack_esperado = self.rx.getNData()
                 if self.getACK_NACK(ack_esperado) == 157:
                     beginning += n
