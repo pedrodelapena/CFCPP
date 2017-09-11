@@ -165,10 +165,14 @@ class enlace(object):
 		    #print(data)
 		    self.tx.sendBuffer(data)
 
-		    if True: # colocar um codigo que espera um ack que o pacote foi recebido sem corrupção aqui, se dar time out mandar denovo
-			    beginning += n
-			    end += n
-			    Parte_atual += 1
+            timeout = time.time()
+
+		    while timeout - time.time() < 3.0:
+                ack_esperado = self.rx.getNData()
+                if self.getACK_NACK(ack_esperado) == 157:
+                    beginning += n
+                    end += n
+                    Parte_atual += 1
 
 		    
 
@@ -273,7 +277,7 @@ class enlace(object):
             	if P_size = Current_P_size:
             		Complete_package += payload
 
-            		self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)# send ack here
+            		self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
             		Current_P_size += 1
 
 
