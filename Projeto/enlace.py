@@ -109,6 +109,13 @@ class enlace(object):
         container = self.headStruct.parse(head)
         return (container["P_size"],container["P_total"])
 
+    def CRC(self,data):
+        crc16 = crcmod.predefined.mkCrcFun("crc-16")
+
+        CRC = hex(crc16(data))
+        print(CRC)
+        return CRC
+
     def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
 
        
@@ -136,7 +143,12 @@ class enlace(object):
         while Parte_atual <= quantidade_partes: # roda a quantidade de vezes minima
             #print(a[beginning:end])
 
-            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,0,0)
+            temp_head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,0,0)
+            head_crc = self.CRC(temp_head)
+            payload_crc = self.CRC(data)
+
+            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
+
             print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",(head))
             data = (head + data + self.end)
             print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
@@ -150,6 +162,8 @@ class enlace(object):
                     beginning += n
                     end += n
                     Parte_atual += 1
+                elif self.getACK_NACK(ack_esperado) == 14:
+                    break
 
 		    
 
