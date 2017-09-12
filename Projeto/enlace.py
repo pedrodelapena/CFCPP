@@ -31,7 +31,7 @@ class enlace(object):
     """ This class implements methods to the interface between Enlace and Application
     """
     headSTART = 0xFF # 255 #super clever head start
-    headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK_NACK" / Int8ub,"P_size" / Int8ub,"P_total" / Int8ub )
+    headStruct = Struct("start" / Int8ub,"size" / Int16ub,"SYN" / Int8ub,"ACK_NACK" / Int8ub,"P_size" / Int8ub,"P_total" / Int8ub,"CheckSum" / Int16ub,"CheckSum_head" / Int16ub )
     ackCode = 0x9d # 157
     nackCode = 0x0e # 14
     synCode = 0x01 # 1
@@ -66,46 +66,46 @@ class enlace(object):
         self.fisica.close()
 
     def buildHead(self, dataLen):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.fakeSyn, ACK_NACK = self.fakeAck,P_size = 0, P_total =0))
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.fakeSyn, ACK_NACK = self.fakeAck,P_size = 0, P_total =0,CheckSum = 0, CheckSum_head =0))
         return(head)
 
     def buildSync(self, dataLen = 0):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.fakeAck,P_size = 0, P_total =0))
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.fakeAck,P_size = 0, P_total =0,CheckSum = 0, CheckSum_head =0))
         return(head)
 
     def buildACK_NACK(self, dataLen = 0,deuCerto = False):
         if deuCerto == True:
-            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0))
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = 0, P_total =0,CheckSum = 0, CheckSum_head =0))
         if deuCerto == False:
-            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0))
+            head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0,CheckSum = 0, CheckSum_head =0))
         return(head)
 
-    def build_complete(self, dataLen,deuCerto,len,total_len):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = len, P_total = total_len))
+    def build_complete(self, dataLen,deuCerto,len,total_len,CheckSum_payload,CheckSum_head):
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = len, P_total = total_len,CheckSum = CheckSum_payload, CheckSum_head =CheckSum_head))
         return(head)
 
     def getheadStart(self,file):
-        head = file[0:7]
+        head = file[0:11]
         container = self.headStruct.parse(head)
         return container["start"]
 
     def getSize(self,file):
-        head = file[0:7]
+        head = file[0:11]
         container = self.headStruct.parse(head)
         return container["size"]
 
     def getSYN(self,file):
-        head = file[0:7]
+        head = file[0:11]
         container = self.headStruct.parse(head)
         return container["SYN"]
 
     def getACK_NACK(self,file):
-        head = file[0:7]
+        head = file[0:11]
         container = self.headStruct.parse(head)
         return container["ACK_NACK"]
 
     def getP_size_total(self,file):
-        head = file[0:7]
+        head = file[0:11]
         container = self.headStruct.parse(head)
         return (container["P_size"],container["P_total"])
 
@@ -136,7 +136,7 @@ class enlace(object):
         while Parte_atual <= quantidade_partes: # roda a quantidade de vezes minima
             #print(a[beginning:end])
 
-            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes)
+            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,0,0)
             print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",(head))
             data = (head + data + self.end)
             print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
@@ -282,8 +282,8 @@ class enlace(object):
 
     def openPackage(self,file):
 
-    	head = file[0:7]
-    	file = file[7:-8]
+    	head = file[0:11]
+    	file = file[11:-8]
 
     	return(file,head)
 
