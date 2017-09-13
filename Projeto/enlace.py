@@ -25,6 +25,8 @@ from enlaceTx import TX
 
 import math # necessario para divisão de pacotes
 
+import crcmod
+
 
 
 class enlace(object):
@@ -80,8 +82,8 @@ class enlace(object):
             head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.nackCode,P_size = 0, P_total =0,CheckSum = 0, CheckSum_head =0))
         return(head)
 
-    def build_complete(self, dataLen,deuCerto,len,total_len,CheckSum_payload,CheckSum_head):
-        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = len, P_total = total_len,CheckSum = CheckSum_payload, CheckSum_head =CheckSum_head))
+    def build_complete(self, dataLen,deuCerto,payload_len,total_payload_len,CheckSum_payload,CheckSum_head):
+        head = self.headStruct.build(dict(start = self.headSTART,size = dataLen, SYN = self.synCode, ACK_NACK = self.ackCode,P_size = payload_len, P_total = total_payload_len,CheckSum = CheckSum_payload, CheckSum_head =CheckSum_head))
         return(head)
 
     def getheadStart(self,file):
