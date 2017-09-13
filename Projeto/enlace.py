@@ -158,7 +158,10 @@ class enlace(object):
 
 
         print("Quantidade de partes necessarias : ",quantidade_partes)
+        print("")
         print("Início do envio")
+        print("")
+        print("-------------------------")
 
         beginning = 0
         end = n
