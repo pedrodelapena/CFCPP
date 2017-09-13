@@ -119,6 +119,23 @@ class enlace(object):
         print("CRC: ",CRC)
         return CRC
 
+    def get_CRC(self,file):
+        head = file[0:11]
+        container = self.headStruct.parse(head)
+        return (container["CheckSum"],container["CheckSum_head"])
+
+    def compare_CRC(self,file): # função que retorna True Se o CRChead e CRCpayload estiverem certos
+        crc16 = crcmod.predefined.mkCrcFun("crc-16")
+        CheckSum,CheckSum_head = self.get_CRC(file)
+        half_head = file[0:7] # parte do head sem CRC
+
+        data, useless_trash = self.openPackage(file)
+
+        if CheckSum == crc16(data) and CheckSum_head == crc16(half_head):
+            return True
+        else:
+            return False
+
     def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
 
        
