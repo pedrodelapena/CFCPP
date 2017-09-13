@@ -110,10 +110,11 @@ class enlace(object):
         return (container["P_size"],container["P_total"])
 
     def CRC(self,data):
+        # usando crc-16-IBM aka CRC-16
         crc16 = crcmod.predefined.mkCrcFun("crc-16")
 
         CRC = hex(crc16(data))
-        print(CRC)
+        print("CRC: ",CRC)
         return CRC
 
     def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
@@ -144,7 +145,7 @@ class enlace(object):
             #print(a[beginning:end])
 
             temp_head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,0,0)
-            head_crc = self.CRC(temp_head)
+            head_crc = self.CRC(temp_head[0:7]) # a parte do head sem o CRC
             payload_crc = self.CRC(data)
 
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
@@ -164,6 +165,8 @@ class enlace(object):
                     Parte_atual += 1
                 elif self.getACK_NACK(ack_esperado) == 14:
                     break
+
+                time.sleep(0.05)
 
 		    
 
