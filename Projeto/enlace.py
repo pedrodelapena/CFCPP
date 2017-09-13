@@ -111,7 +111,6 @@ class enlace(object):
         container = self.headStruct.parse(head)
         return (container["P_size"],container["P_total"])
 
-
     def CRC(self,data):
         # usando crc-16-IBM aka CRC-16
         crc16 = crcmod.predefined.mkCrcFun("crc-16")
@@ -119,23 +118,6 @@ class enlace(object):
         CRC = (crc16(data))
         print("CRC: ",CRC)
         return CRC
-
-    def get_CRC(self,file):
-        head = file[0:11]
-        container = self.headStruct.parse(head)
-        return (container["CheckSum"],container["CheckSum_head"])
-
-    def compare_CRC(self,file): # função que retorna True Se o CRChead e CRCpayload estiverem certos
-        crc16 = crcmod.predefined.mkCrcFun("crc-16")
-        CheckSum,CheckSum_head = self.get_CRC(file)
-        half_head = file[0:7] # parte do head sem CRC
-
-        data, useless_trash = self.openPackage(file)
-
-        if CheckSum == crc16(data) and CheckSum_head == crc16(half_head):
-            return True
-        else:
-            return False
 
     def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
 
@@ -155,8 +137,11 @@ class enlace(object):
 
         quantidade_partes = math.ceil(len(data)/n) # acha a quantidade minima de partes que o pacote de ser dividido
 
-        print("quantidade de partes necessarias : ",quantidade_partes)
-        print("bytes em cada pacote:",quantidade_partes,"*",n," + ",len(data)%n)
+        timeinit = time.time()
+
+
+        print("Quantidade de partes necessarias : ",quantidade_partes)
+        print("Início do envio")
 
         beginning = 0
         end = n
@@ -172,7 +157,7 @@ class enlace(object):
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
 
             data = (head + data + self.end)
-            print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
+            print("- Parte",Parte_atual,"de",quantidade_partes)
             self.tx.sendBuffer(data)
 
             timeout = time.time()
@@ -181,16 +166,29 @@ class enlace(object):
                 ack_esperado = self.rx.getNData()
                 if self.getheadStart(ack_esperado)==255:
                     if self.getACK_NACK(ack_esperado) == 157:
+                        print("Recebeu ACK")
+                        print("")
                         beginning += n
                         end += n
                         Parte_atual += 1
                         break
                     elif self.getACK_NACK(ack_esperado) == 14:
+                        print("Recebeu NACK")
+                        print("Reenviando pacote")
+                        print("")
                         break
+                if time.time() - timeout >= 3.0:
+                    print("TimeOut")
+                    print("Reenviando pacote")
+                    print("")
+
 
                 time.sleep(0.05)
 
-		    
+
+        timefim = time.time()
+        print("")
+        print("Tempo da transmissão:", timefim - timeinit, "segundos")
 
 
 
@@ -231,15 +229,15 @@ class enlace(object):
             time.sleep(1)
             self.tx.sendBuffer(sync)
             self.rx.clearBuffer()
-            print("Mandei o Sync \:3")
+            print("Mandei o Sync :3")
 
             time_now = time.time()
             if (time_now - time_inicio) < 30.0:
 
                 ack_syn = self.rx.getNData()
-                if self.getheadStart(data)==255:
+                if self.getheadStart(ack_syn)==255:
                     if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
-                        print("Mandei o ACK \:3")
+                        print("Mandei o ACK :3")
                         time.sleep(1)
                         self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
                         break
@@ -278,6 +276,7 @@ class enlace(object):
 
 
                 if P_size == Current_P_size and self.compare_CRC(data):
+
                     print("Payload : ",type(payload))
 
 
@@ -295,7 +294,6 @@ class enlace(object):
                     head = self.buildACK_NACK(deuCerto = False)
                     print("A casa caiu, arquivo corrompido, mandado nack")
                     self.tx.sendBuffer(head + self.end)
-
 
 
                 if P_size == P_total:
@@ -337,8 +335,8 @@ class enlace(object):
 
     def openPackage(self,file):
 
-    	head = file[0:11]
-    	file = file[11:-8]
+        head = file[0:11]
+        file = file[11:-8]
 
-    	return(file,head)
+        return(file,head)
 
