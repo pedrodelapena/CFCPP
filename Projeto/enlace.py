@@ -41,7 +41,7 @@ class enlace(object):
     fakeAck = 0x00
     fakeSyn = 0x00
 
-    maximum_Package = 2048 *8 # determina o tamanho maximo que um pacote pode ter (*8 pois precisa ser em bits)
+    maximum_Package = 2048 # determina o tamanho maximo que um pacote pode ter (*8 pois precisa ser em bits)
 
     def __init__(self, name):
         """ Initializes the enlace class
@@ -111,6 +111,7 @@ class enlace(object):
         container = self.headStruct.parse(head)
         return (container["P_size"],container["P_total"])
 
+
     def CRC(self,data):
         # usando crc-16-IBM aka CRC-16
         crc16 = crcmod.predefined.mkCrcFun("crc-16")
@@ -118,6 +119,23 @@ class enlace(object):
         CRC = (crc16(data))
         print("CRC: ",CRC)
         return CRC
+
+    def get_CRC(self,file):
+        head = file[0:11]
+        container = self.headStruct.parse(head)
+        return (container["CheckSum"],container["CheckSum_head"])
+
+    def compare_CRC(self,file): # função que retorna True Se o CRChead e CRCpayload estiverem certos
+        crc16 = crcmod.predefined.mkCrcFun("crc-16")
+        CheckSum,CheckSum_head = self.get_CRC(file)
+        half_head = file[0:7] # parte do head sem CRC
+
+        data, useless_trash = self.openPackage(file)
+
+        if CheckSum == crc16(data) and CheckSum_head == crc16(half_head):
+            return True
+        else:
+            return False
 
     def Compare_number_package(self,file): # compara se todos os pacotes foram recebidos
 
@@ -138,6 +156,7 @@ class enlace(object):
         quantidade_partes = math.ceil(len(data)/n) # acha a quantidade minima de partes que o pacote de ser dividido
 
         print("quantidade de partes necessarias : ",quantidade_partes)
+        print("bytes em cada pacote:",quantidade_partes,"*",n," + ",len(data)%n)
 
         beginning = 0
         end = n
@@ -165,7 +184,7 @@ class enlace(object):
                         beginning += n
                         end += n
                         Parte_atual += 1
-                        #erro aquiiiiiiiiiiiiiiiiiiiiiiiiiiii nunca sai desse loop
+                        break
                     elif self.getACK_NACK(ack_esperado) == 14:
                         break
 
@@ -218,7 +237,7 @@ class enlace(object):
             if (time_now - time_inicio) < 30.0:
 
                 ack_syn = self.rx.getNData()
-                if self.getheadStart(data)==255
+                if self.getheadStart(data)==255:
                     if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
                         print("Mandei o ACK \:3")
                         time.sleep(1)
