@@ -165,6 +165,7 @@ class enlace(object):
                         beginning += n
                         end += n
                         Parte_atual += 1
+                        #erro aquiiiiiiiiiiiiiiiiiiiiiiiiiiii nunca sai desse loop
                     elif self.getACK_NACK(ack_esperado) == 14:
                         break
 
@@ -217,11 +218,12 @@ class enlace(object):
             if (time_now - time_inicio) < 30.0:
 
                 ack_syn = self.rx.getNData()
-                if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
-                    print("Mandei o ACK \:3")
-                    time.sleep(1)
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
-                    break
+                if self.getheadStart(data)==255
+                    if self.getACK_NACK(ack_syn) == 157 and self.getSYN(ack_syn) == 1: 
+                        print("Mandei o ACK \:3")
+                        time.sleep(1)
+                        self.tx.sendBuffer(self.buildACK_NACK(deuCerto=True) + self.end)
+                        break
 
             elif (time_now - time_inicio) > 30.0:
                 sys.exit()
@@ -262,14 +264,18 @@ class enlace(object):
 
                     Complete_package += payload
 
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end)
+                    head = self.buildACK_NACK(deuCerto = True)
+                    print("mandei ack",head)
+                    self.tx.sendBuffer(head + self.end)
+
+
                     Current_P_size += 1
 
 
                 if P_size == P_total:
                     break
 
-        print("Meu debug: "+str(Complete_package))
+        #print("Meu debug: "+str(Complete_package))
         data, head = self.openPackage(data)
 
         """
