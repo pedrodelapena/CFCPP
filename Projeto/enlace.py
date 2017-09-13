@@ -176,9 +176,9 @@ class enlace(object):
 
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
 
-            data = (head + data + self.end)
+            file = (head + data + self.end)
             print("- Parte",Parte_atual,"de",quantidade_partes)
-            self.tx.sendBuffer(data)
+            self.tx.sendBuffer(file)
 
             timeout = time.time()
 
