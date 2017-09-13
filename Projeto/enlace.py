@@ -116,7 +116,7 @@ class enlace(object):
         crc16 = crcmod.predefined.mkCrcFun("crc-16")
 
         CRC = (crc16(data))
-        print("CRC: ",CRC)
+        #'print("CRC: ",CRC)
         return CRC
 
     def get_CRC(self,file):
@@ -183,20 +183,20 @@ class enlace(object):
                 ack_esperado = self.rx.getNData()
                 if self.getheadStart(ack_esperado)==255:
                     if self.getACK_NACK(ack_esperado) == 157:
-                        print("Recebeu ACK")
+                        print("  - Recebeu ACK")
                         print("")
                         beginning += n
                         end += n
                         Parte_atual += 1
                         break
                     elif self.getACK_NACK(ack_esperado) == 14:
-                        print("Recebeu NACK")
-                        print("Reenviando pacote")
+                        print("  - Recebeu NACK")
+                        print("  - Reenviando pacote")
                         print("")
                         break
                 if time.time() - timeout >= 3.0:
-                    print("TimeOut")
-                    print("Reenviando pacote")
+                    print("  - TimeOut")
+                    print("  - Reenviando pacote")
                     print("")
 
 
