@@ -57,11 +57,6 @@ def main():
     txSize = com.tx.getStatus()
     print ("Transmitido       {} bytes ".format(txLen))
     
-    #calculando tempo de transmissão
-    termino = time.time()
-    tempo = termino - inicio
-    print("Tempo de transmissão", tempo)
-    
     # Encerra comunicação
     print("-------------------------")
     print("Comunicação encerrada")
