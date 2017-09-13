@@ -284,9 +284,14 @@ class enlace(object):
 
         Current_P_size = 1
 
+
+
         while True: #pega um pacote
             data = self.rx.getNData()
             self.rx.clearBuffer()
+
+            print(data)
+
             if self.getheadStart(data)==255: # se achar o head do pacote
                 payload, trash = self.openPackage(data)
 
@@ -295,7 +300,9 @@ class enlace(object):
                 print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
 
-                if P_size == Current_P_size and self.compare_CRC(data):
+
+
+                if self.compare_CRC(data):
 
                     print("Payload : ",type(payload))
 

@@ -103,7 +103,7 @@ class RX(object):
         This function blocks until the number of bytes is received
         """
         inicio= time.time()
-        timeout= 6.66
+        timeout= 15.0
         ndc=False
 
         while (time.time()-inicio)<timeout:
@@ -118,9 +118,10 @@ class RX(object):
 
         	time.sleep(0.05)
 
-
         if ndc:
             return(self.getBuffer(len(self.buffer)))
+
+        self.clearBuffer()
         return b'0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 
 
