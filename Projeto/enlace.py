@@ -277,7 +277,7 @@ class enlace(object):
                 print("P_size,Current_P_size : ",P_size," ",Current_P_size)
 
 
-                if P_size == Current_P_size:
+                if P_size == Current_P_size and compare_CRC(data):
                     print("Payload : ",type(payload))
 
 
@@ -289,6 +289,13 @@ class enlace(object):
 
 
                     Current_P_size += 1
+
+                if compare_CRC(data) == False:
+
+                    head = self.buildACK_NACK(deuCerto = False)
+                    print("A casa caiu, arquivo corrompido, mandado nack")
+                    self.tx.sendBuffer(head + self.end)
+
 
 
                 if P_size == P_total:
