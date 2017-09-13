@@ -115,7 +115,7 @@ class enlace(object):
         # usando crc-16-IBM aka CRC-16
         crc16 = crcmod.predefined.mkCrcFun("crc-16")
 
-        CRC = hex(crc16(data))
+        CRC = (crc16(data))
         print("CRC: ",CRC)
         return CRC
 
@@ -152,7 +152,6 @@ class enlace(object):
 
             head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
 
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",(head))
             data = (head + data + self.end)
             print("Parte_atual,quantidade_partes",Parte_atual,quantidade_partes)
             self.tx.sendBuffer(data)
@@ -161,12 +160,13 @@ class enlace(object):
 
             while time.time() - timeout <= 3.0:
                 ack_esperado = self.rx.getNData()
-                if self.getACK_NACK(ack_esperado) == 157:
-                    beginning += n
-                    end += n
-                    Parte_atual += 1
-                elif self.getACK_NACK(ack_esperado) == 14:
-                    break
+                if self.getheadStart(ack_esperado)==255:
+                    if self.getACK_NACK(ack_esperado) == 157:
+                        beginning += n
+                        end += n
+                        Parte_atual += 1
+                    elif self.getACK_NACK(ack_esperado) == 14:
+                        break
 
                 time.sleep(0.05)
 
@@ -183,7 +183,11 @@ class enlace(object):
                     print("Syn recebido, send ack + syn")
                     
                     time.sleep(0.1)
-                    self.tx.sendBuffer(self.buildACK_NACK(deuCerto = True) + self.end) #ack + syn
+                    ack_nack = self.buildACK_NACK(deuCerto = True)
+                    self.tx.sendBuffer(ack_nack + self.end) #ack + syn
+                    print(self.getACK_NACK(ack_nack))
+
+
                     self.rx.clearBuffer()
 
                     data = self.rx.getNData() #receive ack
