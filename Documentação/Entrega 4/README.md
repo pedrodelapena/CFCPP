@@ -29,8 +29,13 @@ onde P_size é o tamanho do pacote, P_total é o tamanho total dos pacotes, Chec
 O polinômio utilizado foi o CRC-16-IBM, também conhecido apenas como <b>CRC-16</b>. 
 
 
-| Forma do polinômio | Conteudo    |
+| <b>Forma do polinômio</b> | <b>Conteudo </b>   |
 |-------------|--------------------|
 | Hexadecimal |         0x18005    |
 | Binária     |  11000000000000101 |
 | Polinomial  | x^16+x^15+x^12+x^0 |
+
+
+## TimeOut
+
+O tempo de timeout escolhido foi de 10s. O envio e recepção não são istantâneos, algumas partes do código demoram para rodar (prints) e quisemos ter uma margem de segurança. Além disso, um timeout menor fazia com que o pacote deixasse de ser recebido pelo server quando foi realizado o teste de validação <i>"Durante a transmissão, desconectar o fio que transmite dados entre Client e Server"</i>
