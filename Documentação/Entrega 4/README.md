@@ -16,11 +16,17 @@ Nesta etapa, o payload é dividido em vários pacotes com <b>tamanho máximo</b>
 
 Previamente, o Head continha apenas os campos:
 
-start (8 bits), size (16 bits), SYN (8 bits), ACK/nACK (8 bits)
+<p>- start (8 bits)</p> 
+<p>- size (16 bits)</p>
+<p>- SYN (8 bits)</p> 
+<p>- ACK/nACK (8 bits)</p>
 
 Nesta etapa do projeto, foram adicionados os seguintes campos ao Head:
 
-P_size (8 bits), P_total (8 bits), CheckSum (16 bits), CheckSum_head (16 bits),
+<p>- P_size (8 bits)</p>
+<p>- P_total (8 bits)</p> 
+<p>- CheckSum (16 bits)</p>
+<p>- CheckSum_head (16 bits)</p>
 
 onde P_size é o tamanho do pacote, P_total é o tamanho total dos pacotes, CheckSum_head é o CRC calculado para o Head e o CheckSum é o CRC calculado para o Payload.
 
