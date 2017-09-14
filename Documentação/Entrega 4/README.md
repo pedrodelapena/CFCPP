@@ -41,6 +41,7 @@ O polinômio utilizado foi o CRC-16-IBM, também conhecido apenas como <b>CRC-16
 | Binária     |  11000000000000101 |
 | Polinomial  | x^16+x^15+x^12+x^0 |
 
+Em comparação com as outras formas de realizar o cálculo do CRC, o CRC-16 é o mais eficiente para o tamanho dos dados transmitidos: em uma sequência de 16 ou menos bits, 100% das falhas são reconhecidas pelo por este CRC. Já o CRC-32 seria menos eficiente para um pacote relativamente pequeno como o transmitido neste projeto, mesmo possuindo a mesma propriedade que o CRC-16 para um pacote de 16 ou menos bits.
 
 ## TimeOut
 
