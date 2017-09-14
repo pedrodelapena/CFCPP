@@ -169,20 +169,21 @@ class enlace(object):
 
         while Parte_atual <= quantidade_partes: # roda a quantidade de vezes minima
             #print(a[beginning:end])
+            payload = data[beginning:end]
 
-            temp_head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,0,0)
+            temp_head = self.build_complete(len(payload),True,Parte_atual,quantidade_partes,0,0)
             head_crc = self.CRC(temp_head[0:7]) # a parte do head sem o CRC
-            payload_crc = self.CRC(data)
+            payload_crc = self.CRC(payload)
 
-            head = self.build_complete(len(data),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
+            head = self.build_complete(len(payload),True,Parte_atual,quantidade_partes,payload_crc,head_crc)
 
-            file = (head + data + self.end)
+            file = (head + payload + self.end)
             print("- Parte",Parte_atual,"de",quantidade_partes)
             self.tx.sendBuffer(file)
 
             timeout = time.time()
 
-            while time.time() - timeout <= 3.0:
+            while time.time() - timeout <= 1.5:
                 ack_esperado = self.rx.getNData()
                 if self.getheadStart(ack_esperado)==255:
                     if self.getACK_NACK(ack_esperado) == 157:
