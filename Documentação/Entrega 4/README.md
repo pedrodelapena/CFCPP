@@ -45,4 +45,4 @@ Em comparação com as outras formas de realizar o cálculo do CRC, o CRC-16 é 
 
 ## TimeOut
 
-O tempo de timeout escolhido foi de 10s. O envio e recepção não são istantâneos, algumas partes do código demoram para rodar (prints) e quisemos ter uma margem de segurança. Além disso, um timeout menor fazia com que o pacote deixasse de ser recebido pelo server quando foi realizado o teste de validação <i>"Durante a transmissão, desconectar o fio que transmite dados entre Client e Server"</i>
+O tempo de timeout escolhido foi de 6s. O envio e recepção não são istantâneos, algumas partes do código demoram para rodar (prints) e quisemos ter uma margem de segurança. Além disso, um timeout menor fazia com que o pacote deixasse de ser recebido pelo server quando foi realizado o teste de validação <i>"Durante a transmissão, desconectar o fio que transmite dados entre Client e Server"</i>
